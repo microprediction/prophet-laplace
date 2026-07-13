@@ -1,9 +1,12 @@
-# prophet-skaters
+# prophet-laplace
+
+*"He's not the messiah. He's a very naughty boy." This package makes
+him useful anyway.*
 
 Prophet in a laplace sandwich: same API, calibrated densities.
 
 ```python
-from prophet_skaters import SandwichedProphet
+from prophet_laplace import SandwichedProphet
 
 m = SandwichedProphet(k=30)          # accepts Prophet's kwargs too
 m.fit(df)                            # ds, y (+ regressors as usual)

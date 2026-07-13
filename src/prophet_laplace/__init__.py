@@ -1,4 +1,4 @@
-"""prophet-skaters: Prophet in a laplace sandwich.
+"""prophet-laplace: Prophet in a laplace sandwich.
 
 Same Prophet API, calibrated densities. A SandwichedProphet fits Prophet
 in the z-coordinates of a laplace forecaster (the Rosenblatt transform of
@@ -12,7 +12,7 @@ Measured on 921 non-price FRED series (pre-registered, see the skaters
 repository): raw Prophet trails laplace by 0.76 nats median one-step
 log-likelihood (family-weighted 4.6); sandwiched, the gap is 0.02.
 """
-from prophet_skaters.sandwich import SandwichedProphet
+from prophet_laplace.sandwich import SandwichedProphet
 
 __all__ = ["SandwichedProphet"]
 __version__ = "0.0.1"

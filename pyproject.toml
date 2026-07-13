@@ -1,5 +1,5 @@
 [project]
-name = "prophet-skaters"
+name = "prophet-laplace"
 version = "0.0.1"
 description = "Prophet in a laplace sandwich: same API, calibrated densities"
 readme = "README.md"

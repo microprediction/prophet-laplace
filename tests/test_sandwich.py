@@ -4,7 +4,7 @@ import random
 import pandas as pd
 import pytest
 
-from prophet_skaters import SandwichedProphet
+from prophet_laplace import SandwichedProphet
 
 
 def _df(n=400, seed=3):
