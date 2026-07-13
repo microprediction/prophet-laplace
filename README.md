@@ -37,6 +37,9 @@ The sandwich closes 97% of Prophet's density gap without retraining
 anything. `predictive(step, z_mu, z_sigma)` exposes the full y-space
 density (logpdf, cdf, quantile) for scoring and risk use.
 
+The same construction lifts other forecasters and detectors too:
+[skaters.microprediction.org/sandwich.html](https://skaters.microprediction.org/sandwich.html).
+
 ## Status
 
 v0: future frames only, horizons past `k` reuse the k-step transport
