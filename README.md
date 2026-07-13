@@ -1,7 +1,6 @@
 # prophet-laplace
 
-*"He's not the messiah. He's a very naughty boy." This package makes
-him useful anyway.*
+*"He's not the messiah. He's a very naughty boy."* ([why](https://medium.com/geekculture/is-facebooks-prophet-the-time-series-messiah-or-just-a-very-naughty-boy-8b71b136bc8c)) *This package makes him useful anyway.*
 
 Prophet in a laplace sandwich: same API, calibrated densities.
 
