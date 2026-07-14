@@ -5,7 +5,14 @@ description = "Prophet in a laplace sandwich: same API, calibrated densities"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.9"
+authors = [{name = "Peter Cotton"}]
+keywords = ["prophet", "forecasting", "calibration", "time-series", "skaters", "laplace"]
 dependencies = ["prophet>=1.1", "skaters>=0.13.0", "pandas"]
+
+[project.urls]
+Homepage = "https://github.com/microprediction/prophet-laplace"
+Repository = "https://github.com/microprediction/prophet-laplace"
+"Sandwich explainer" = "https://skaters.microprediction.org/sandwich.html"
 
 [build-system]
 requires = ["setuptools>=68"]
