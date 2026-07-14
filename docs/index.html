@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>prophet-laplace</title>
+  <meta name="description" content="Prophet in a laplace sandwich: the same Prophet API, with calibrated predictive densities. Run Prophet in skaters' coordinates and map back exactly." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="prophet-laplace" />
+  <meta property="og:title" content="prophet-laplace" />
+  <meta property="og:description" content="Prophet in a laplace sandwich: the same Prophet API, with calibrated predictive densities." />
+  <meta property="og:url" content="https://prophet.microprediction.org/" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="stylesheet" href="./academic.css" />
+  <style>
+    .cta { display: flex; gap: 12px; flex-wrap: wrap; margin: 14px 0 4px; }
+    .cta a { display: inline-block; padding: 7px 14px; border-radius: 8px;
+             background: #4a3aff; color: #fff; font-weight: 600; font-size: 0.92rem; }
+    .cta a.alt { background: #ece9ff; color: #2b2350; }
+    .epigraph { color: var(--muted); font-style: italic; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav-inner">
+      <a class="brand" href="/">prophet-laplace</a>
+      <nav>
+        <a href="https://skaters.microprediction.org/">skaters</a>
+        <a href="https://skaters.microprediction.org/sandwich.html">The sandwich</a>
+        <a href="https://www.microprediction.org/">microprediction.org</a>
+        <a href="https://pypi.org/project/prophet-laplace/">PyPI</a>
+        <a href="https://github.com/microprediction/prophet-laplace">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <h1>prophet-laplace</h1>
+    <p class="epigraph">"He's not the messiah. He's a very naughty boy."
+      (<a href="https://medium.com/geekculture/is-facebooks-prophet-the-time-series-messiah-or-just-a-very-naughty-boy-8b71b136bc8c">why</a>)
+      This package makes him useful anyway.</p>
+
+    <p class="lead">
+      Prophet in a laplace sandwich: the same Prophet API, with calibrated
+      predictive densities. <code>SandwichedProphet</code> fits
+      <a href="https://github.com/facebook/prophet">Prophet</a> in the
+      z-coordinates of a <a href="https://skaters.microprediction.org/">skaters</a>
+      <code>laplace</code> forecaster and maps every forecast back through the
+      exact inverse. Prophet keeps its calendar decomposition, holidays, and
+      extra regressors; the sandwich adds the volatility clock, repeated-value
+      handling, and tails whose stated probabilities come true.
+    </p>
+
+    <div class="cta">
+      <a href="https://pypi.org/project/prophet-laplace/">pip install prophet-laplace</a>
+      <a class="alt" href="https://github.com/microprediction/prophet-laplace">Source &amp; README</a>
+    </div>
+
+    <h2>Quickstart</h2>
+    <p>The API mirrors Prophet. Fit on a frame with <code>ds</code> and
+      <code>y</code>, then predict on a future frame.</p>
+    <pre><code>import pandas as pd
+from prophet_laplace import SandwichedProphet
+
+m = SandwichedProphet(k=30)          # k = forecast horizon, in observations
+m.fit(df)                            # df has columns ds, y (+ any regressors)
+
+future = pd.DataFrame({"ds": pd.date_range(df["ds"].max() + pd.Timedelta(days=1),
+                                           periods=30, freq="D")})
+fc = m.predict(future)               # yhat / yhat_lower / yhat_upper, mapped back exactly
+</code></pre>
+    <p>The point and interval columns are the median and central 68.27% band of
+      the sandwiched predictive, so the interval reflects the volatility clock
+      and tails rather than Prophet's Gaussian assumption. Extra regressors and
+      Prophet keyword arguments pass straight through.</p>
+
+    <h2>Calibrated densities</h2>
+    <p>The reason to sandwich is the full predictive density, not just the
+      interval. <code>predictive</code> returns a y-space distribution with
+      <code>logpdf</code>, <code>cdf</code>, and <code>quantile</code>, with
+      exact change-of-variables accounting.</p>
+    <pre><code>pred = m.predictive(step=1, z_mu=0.0, z_sigma=1.0)
+
+pred.quantile(0.99)    # upper 1% level, tail-aware
+pred.logpdf(y_obs)     # score a realised observation
+pred.cdf(y_obs)        # PIT value; uniform under calibration
+</code></pre>
+
+    <h2>How it works</h2>
+    <p><code>laplace</code> defines a causal bijection on paths, the Rosenblatt
+      transform <em>z<sub>t</sub></em> = &Phi;<sup>&minus;1</sup>(<em>F<sub>t</sub></em>(<em>y<sub>t</sub></em>)),
+      where <em>F<sub>t</sub></em> is the predictive cdf <code>laplace</code>
+      issued for <em>y<sub>t</sub></em>. Under calibration the z stream is close
+      to i.i.d. standard normal, so Prophet is handed a stationarised,
+      unit-scale series and its calendar model works on structure that survives
+      the transform.</p>
+    <p>Every density maps back with no approximation in the accounting:
+      log&nbsp;<em>f<sub>Y</sub></em>(y) = log&nbsp;<em>f<sub>Z</sub></em>(z) +
+      log&nbsp;<em>f<sub>t</sub></em>(y) &minus; log&nbsp;&phi;(z). Running an
+      opponent between the transform and its inverse is the <em>sandwich</em>;
+      whatever the inner model finds is, by construction, structure
+      <code>laplace</code> alone did not capture.</p>
+
+    <h2>The measured gap</h2>
+    <p>Measured on 921 non-price FRED series under a pre-registered protocol
+      (statements filed before results, frozen universe, harness and results
+      committed in the skaters repository):</p>
+    <table>
+      <thead><tr><th></th><th>median one-step LL vs laplace</th><th>family-weighted (120 families)</th></tr></thead>
+      <tbody>
+        <tr><td>Prophet raw</td><td>&minus;0.755 nats</td><td>&minus;4.60 nats</td></tr>
+        <tr><td>Prophet sandwiched</td><td><strong>&minus;0.020 nats</strong></td><td><strong>&minus;0.025 nats</strong></td></tr>
+      </tbody>
+    </table>
+    <p>The sandwich closes 97% of Prophet's density gap without retraining
+      anything. The residual 0.02 nats is the epsilon: conditional structure
+      neither model captures. The same construction lifts other forecasters and
+      detectors, tabled on
+      <a href="https://skaters.microprediction.org/sandwich.html">the sandwich page</a>.</p>
+
+    <p class="byline">v0 demonstrates interoperability: it maps future frames
+      only, and horizons past <code>k</code> reuse the k-step transport, a
+      disclosed approximation. Full API and caveats in the
+      <a href="https://github.com/microprediction/prophet-laplace">README</a>.</p>
+  </main>
+
+  <footer>
+    <a href="https://github.com/microprediction/prophet-laplace">github.com/microprediction/prophet-laplace</a> &middot;
+    <a href="https://pypi.org/project/prophet-laplace/">PyPI</a> &middot;
+    part of the <a href="https://repos.microprediction.org/">microprediction stack</a>
+  </footer>
+</body>
+</html>
