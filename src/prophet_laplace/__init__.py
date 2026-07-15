@@ -15,4 +15,4 @@ log-likelihood (family-weighted 4.6); sandwiched, the gap is 0.02.
 from prophet_laplace.sandwich import SandwichedProphet
 
 __all__ = ["SandwichedProphet"]
-__version__ = "0.0.1"
+__version__ = "0.0.2"

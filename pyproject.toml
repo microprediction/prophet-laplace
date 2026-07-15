@@ -1,6 +1,6 @@
 [project]
 name = "prophet-laplace"
-version = "0.0.1"
+version = "0.0.2"
 description = "Prophet in a laplace sandwich: same API, calibrated densities"
 readme = "README.md"
 license = {text = "MIT"}
