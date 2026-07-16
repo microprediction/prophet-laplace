@@ -10,7 +10,9 @@
   <meta property="og:title" content="prophet-laplace" />
   <meta property="og:description" content="Prophet in a laplace sandwich: the same Prophet API, with calibrated predictive densities." />
   <meta property="og:url" content="https://prophet.microprediction.org/" />
-  <meta name="twitter:card" content="summary" />
+  <meta property="og:image" content="https://prophet.microprediction.org/assets/prophet-skating.jpg" />
+  <meta property="og:image:alt" content="The prophet skating on a frozen lake on skates labelled T and T-inverse: the transform and its exact inverse, the sandwich." />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="stylesheet" href="./academic.css" />
   <style>
     .cta { display: flex; gap: 12px; flex-wrap: wrap; margin: 14px 0 4px; }
@@ -18,6 +20,9 @@
              background: #4a3aff; color: #fff; font-weight: 600; font-size: 0.92rem; }
     .cta a.alt { background: #ece9ff; color: #2b2350; }
     .epigraph { color: var(--muted); font-style: italic; }
+    .hero { margin: 18px 0 4px; }
+    .hero img { width: 100%; height: auto; border-radius: 10px; display: block; }
+    .hero figcaption { font-size: 0.82rem; color: var(--muted); margin-top: 8px; line-height: 1.4; }
   </style>
 </head>
 <body>
@@ -25,6 +30,8 @@
     <div class="nav-inner">
       <a class="brand" href="/">prophet-laplace</a>
       <nav>
+        <a href="/">Home</a>
+        <a href="/demo.html">Demo</a>
         <a href="https://skaters.microprediction.org/">skaters</a>
         <a href="https://skaters.microprediction.org/sandwich.html">The sandwich</a>
         <a href="https://www.microprediction.org/">microprediction.org</a>
@@ -40,6 +47,13 @@
       (<a href="https://medium.com/geekculture/is-facebooks-prophet-the-time-series-messiah-or-just-a-very-naughty-boy-8b71b136bc8c">why</a>)
       This package makes him useful anyway.</p>
 
+    <figure class="hero">
+      <img src="./assets/prophet-skating.jpg"
+        alt="The prophet skating on a frozen lake, on skates labelled T and T-inverse." />
+      <figcaption>The prophet skates in laplace's coordinates: out on <code>T</code>,
+        back on <code>T<sup>&minus;1</sup></code>, and the ice keeps its shape.</figcaption>
+    </figure>
+
     <p class="lead">
       Prophet in a laplace sandwich: the same Prophet API, with calibrated
       predictive densities. <code>SandwichedProphet</code> fits
@@ -53,6 +67,7 @@
 
     <div class="cta">
       <a href="https://pypi.org/project/prophet-laplace/">pip install prophet-laplace</a>
+      <a class="alt" href="/demo.html">See it live &rarr;</a>
       <a class="alt" href="https://github.com/microprediction/prophet-laplace">Source &amp; README</a>
     </div>
 

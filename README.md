@@ -2,7 +2,9 @@
 
 *"He's not the messiah. He's a very naughty boy."* ([why](https://medium.com/geekculture/is-facebooks-prophet-the-time-series-messiah-or-just-a-very-naughty-boy-8b71b136bc8c)) *This package makes him useful anyway.*
 
-Prophet in a laplace sandwich: the same Prophet API, with calibrated predictive densities.
+![The prophet skating in laplace's coordinates, out on T and back on T-inverse](https://raw.githubusercontent.com/microprediction/prophet-laplace/main/docs/assets/prophet-skating.jpg)
+
+Prophet in a laplace sandwich: the same Prophet API, with calibrated predictive densities. [Try the live demo.](https://prophet.microprediction.org/demo.html)
 
 `SandwichedProphet` fits [Prophet](https://github.com/facebook/prophet) in the z-coordinates of a [skaters](https://github.com/microprediction/skaters) `laplace` forecaster and maps every forecast back through the exact inverse. Prophet keeps its calendar decomposition, holidays, and extra regressors. The sandwich adds the volatility clock, repeated-value handling, and tails whose stated probabilities come true.
 

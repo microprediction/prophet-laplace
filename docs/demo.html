@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>The sandwich, live — prophet-laplace</title>
+  <meta name="description" content="Prophet and the sandwich agree on the mean and disagree on the band. Prophet's is a fixed Gaussian; the sandwiched band works in laplace's coordinates, breathes with volatility, and keeps its tails. Computed live in your browser." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="prophet-laplace" />
+  <meta property="og:title" content="The sandwich, live" />
+  <meta property="og:description" content="Prophet keeps its mean; the sandwich fixes the band. Live in your browser." />
+  <meta property="og:url" content="https://prophet.microprediction.org/demo.html" />
+  <meta property="og:image" content="https://prophet.microprediction.org/assets/prophet-skating.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="stylesheet" href="./academic.css" />
+  <style>
+    .demo-wrap { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 18px 18px 10px; margin: 24px 0; }
+    .panel-label { color: var(--muted); font-size: 13px; letter-spacing: .04em; text-transform: uppercase; margin: 6px 0 2px; }
+    .demo-controls { display: flex; gap: 10px; align-items: center; margin: 10px 0 2px; flex-wrap: wrap; }
+    .demo-controls button { background: var(--accent); color: #fff; border: 0; border-radius: 7px; padding: 7px 14px; font-size: 15px; cursor: pointer; }
+    .demo-controls button:hover { background: var(--accent-dark); }
+    .demo-controls button.on { background: var(--accent-dark); box-shadow: inset 0 0 0 2px #fff3; }
+    .demo-controls button.secondary { background: var(--code-bg); color: var(--text); border: 1px solid var(--border); }
+    .demo-note { color: var(--muted); font-size: 14px; margin: 8px 0 0; }
+    .legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: var(--muted); margin: 8px 0 0; align-items: center; }
+    .legend .sw { display: inline-block; width: 26px; height: 0; vertical-align: middle; margin-right: 6px; }
+    canvas { width: 100%; display: block; }
+    .diagram { display: block; margin: 18px auto 6px; max-width: 580px; width: 100%; }
+    .diagram text { font: 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: var(--text); }
+    .diagram .lbl { font-size: 12.5px; fill: var(--muted); }
+    .diagram .node { font-weight: 600; }
+    .diagram line, .diagram path { stroke: var(--muted); stroke-width: 1.4; fill: none; }
+    .diagram .accent { stroke: var(--accent); }
+    .diagram .hot { stroke: #ff8a3a; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav-inner">
+      <a class="brand" href="/">prophet-laplace</a>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/demo.html">Demo</a>
+        <a href="https://skaters.microprediction.org/">skaters</a>
+        <a href="https://skaters.microprediction.org/sandwich.html">The sandwich</a>
+        <a href="https://www.microprediction.org/">microprediction.org</a>
+        <a href="https://pypi.org/project/prophet-laplace/">PyPI</a>
+        <a href="https://github.com/microprediction/prophet-laplace">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <h1>The sandwich, live</h1>
+    <p class="subtitle">Prophet and the sandwich agree on the mean. They
+      disagree on the <strong>band</strong>, and you can watch why.</p>
+
+    <p class="lead">Prophet forecasts a trend-and-seasonality mean and wraps it
+      in a <em>fixed-width</em> Gaussian interval: the same &plusmn;1.96&sigma;
+      whether the series is calm or bursting, with light tails. The sandwich
+      leaves the mean untouched and changes the coordinates. It runs Prophet in
+      the z-coordinates of a <code>laplace</code> forecaster,
+      <em>z<sub>t</sub></em> = &Phi;<sup>&minus;1</sup>(<em>F<sub>t</sub></em>(<em>y<sub>t</sub></em>)),
+      and maps the forecast back through the exact inverse. Downstairs the noise
+      is boring; upstairs the band breathes with the volatility clock and the
+      stated probabilities come true.</p>
+
+    <svg class="diagram" viewBox="0 0 580 190" role="img" aria-label="Commutative diagram: y maps to z by laplace's forecast cdf; Prophet forecasts the easy z-coordinates; the inverse map carries the forecast back to a correctly-shaped band in y.">
+      <text class="node" x="46" y="40">y<tspan baseline-shift="sub" font-size="11">t</tspan> (raw series)</text>
+      <text class="node" x="392" y="40">z<tspan baseline-shift="sub" font-size="11">t</tspan> ~ N(0,1)</text>
+      <text class="node" x="20" y="164">band in y (breathes)</text>
+      <text class="node" x="372" y="164">Prophet forecasts here</text>
+      <path class="accent" d="M 200 35 L 372 35" marker-end="url(#a)"/>
+      <text class="lbl" x="214" y="26">z = &Phi;&#8315;&#185;(F<tspan baseline-shift="sub" font-size="10">t</tspan>(y)) &nbsp;[laplace]</text>
+      <path d="M 442 55 L 442 140" marker-end="url(#a)"/>
+      <text class="lbl" x="452" y="102">Prophet (easy)</text>
+      <path class="hot" d="M 362 155 L 190 155" marker-end="url(#a)"/>
+      <text class="lbl" x="205" y="147">y&#770; = F<tspan baseline-shift="sub" font-size="10">t</tspan>&#8315;&#185;(&Phi;(z&#770;))</text>
+      <path d="M 84 55 L 84 140" marker-end="url(#a)"/>
+      <text class="lbl" x="94" y="102">wrong band</text>
+      <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#5a5a5a" stroke="none"/></marker></defs>
+    </svg>
+
+    <div class="demo-wrap">
+      <p class="panel-label">upstairs: the series, Prophet's fixed band vs the sandwiched band, with 8-step fans</p>
+      <canvas id="ypanel" data-h="270"></canvas>
+      <p class="panel-label">downstairs: the same points in laplace's coordinates, where Prophet does its work</p>
+      <canvas id="zpanel" data-h="150"></canvas>
+      <div class="demo-controls">
+        <button id="trend">Trend</button>
+        <button id="season">Seasonality</button>
+        <button id="burst" class="secondary">Volatility burst</button>
+        <button id="spike" class="secondary">Outlier</button>
+      </div>
+      <div class="legend">
+        <span><span class="sw" style="border-top:2px dashed #9a9a9a;"></span>Prophet, fixed Gaussian band</span>
+        <span><span class="sw" style="border-top:10px solid rgba(74,58,255,0.30);"></span>sandwiched band (laplace)</span>
+        <span><span class="sw" style="border-top:10px solid rgba(255,138,58,0.30);"></span>sandwiched 8-step fan</span>
+      </div>
+      <p class="demo-note">Hit <em>Volatility burst</em> and watch upstairs: the
+        sandwiched band widens to keep the dots inside, while Prophet's fixed
+        band stays put and the points spill past its stated 95%. In the calm
+        stretches Prophet's band is instead too wide. Downstairs the dots sit in
+        the same &plusmn;1.96 band throughout, because the map absorbed the
+        structure. <code>laplace</code> runs live from npm; Prophet's part is the
+        shared calendar mean, which the sandwich never touches.</p>
+    </div>
+
+    <h2>Why it matters: the band was the problem</h2>
+    <p>Prophet's mean is fine. Its density is not: a fixed Gaussian cannot state
+      an interval that comes true on series whose volatility moves, and its tails
+      are too thin. Because the sandwich is an exact change of variables, the
+      fix costs nothing in accounting and needs no retraining. Measured on 921
+      non-price FRED series, pre-registered:</p>
+
+    <table>
+      <thead><tr><th></th><th>median one-step LL vs laplace</th><th>family-weighted (120 families)</th></tr></thead>
+      <tbody>
+        <tr><td>Prophet raw</td><td>&minus;0.755 nats</td><td>&minus;4.60 nats</td></tr>
+        <tr><td>Prophet sandwiched</td><td><strong>&minus;0.020 nats</strong></td><td><strong>&minus;0.025 nats</strong></td></tr>
+      </tbody>
+    </table>
+
+    <p>The sandwich closes 97% of the density gap without touching Prophet's
+      calendar model. The full construction, and the same table for other
+      forecasters and detectors, is on
+      <a href="https://skaters.microprediction.org/sandwich.html">the sandwich page</a>.
+      To run it yourself: <code>pip install prophet-laplace</code>
+      (<a href="/">the API</a>).</p>
+  </main>
+
+  <script type="module">
+    import { laplace, Dist } from "https://cdn.jsdelivr.net/npm/skaters@0.13.0/+esm";
+
+    const INK = "#1a1a1a", ACCENT = "#4a3aff", BAND = "rgba(74,58,255,0.18)",
+          HOT = "#ff8a3a", HOTBAND = "rgba(255,138,58,0.20)", BASE = "#e2e2e2",
+          MUTED = "#5a5a5a", GREY = "#9a9a9a";
+    const K = 8, N = 200, Z = 1.96;
+
+    let seed = 7;
+    const rand = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+    const gauss = () => {
+      const u = Math.max(rand(), 1e-12), v = rand();
+      return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+    };
+
+    let trendOn = false, seasonOn = false, burstLeft = 0, pendingSpike = false, level = 0;
+    function nextY(t) {
+      if (trendOn) level += 0.06;
+      const vol = burstLeft > 0 ? (burstLeft--, 1.25) : 0.28;
+      let y = level + vol * gauss();
+      if (seasonOn) y += 1.1 * Math.sin(t / 9);
+      if (pendingSpike) { pendingSpike = false; y += 5.0; }
+      return y;
+    }
+
+    let f = laplace(K), state = null, t = 0, lastDists = null;
+    const ys = [], means = [], los = [], his = [], zs = [], pLo = [], pHi = [];
+    // Prophet's homoscedastic dispersion: running RMS residual (near-constant).
+    let sig2 = 0.1, cnt = 0, sigP = 0.32;
+
+    function step() {
+      const y = nextY(t);
+      const [dists, s] = f(y, state);
+      state = s;
+      const m = dists[0].mean;
+      const r = y - m; cnt += 1; sig2 += (r * r - sig2) / cnt; sigP = Math.sqrt(sig2);
+      ys.push(y);
+      zs.push(state.z && state.z[0] != null ? state.z[0] : 0.0);
+      means.push(m);
+      los.push(dists[0].quantile(0.025));
+      his.push(dists[0].quantile(0.975));
+      pLo.push(m - Z * sigP);
+      pHi.push(m + Z * sigP);
+      lastDists = dists;
+      if (ys.length > N) { ys.shift(); means.shift(); los.shift(); his.shift(); zs.shift(); pLo.shift(); pHi.shift(); }
+      t += 1;
+    }
+
+    function fit(cv) {
+      const dpr = window.devicePixelRatio || 1;
+      const w = cv.clientWidth || 900, h = +cv.dataset.h;
+      const bw = Math.round(w * dpr), bh = Math.round(h * dpr);
+      if (cv.width !== bw || cv.height !== bh) { cv.width = bw; cv.height = bh; cv.style.height = h + "px"; }
+      const ctx = cv.getContext("2d");
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return [ctx, w, h];
+    }
+
+    const PAD = 36;
+    let yLoS = null, yHiS = null;
+    const xOf = (W) => (i) => PAD + (W - 2 * PAD) * i / (N - 1 + K);
+
+    function drawY() {
+      const cv = document.getElementById("ypanel");
+      const [ctx, W, H] = fit(cv);
+      ctx.clearRect(0, 0, W, H);
+      const n = ys.length; if (n < 3 || !lastDists) return;
+      let lo = Infinity, hi = -Infinity;
+      for (let i = 0; i < n; i++) {
+        lo = Math.min(lo, ys[i], los[i], pLo[i]); hi = Math.max(hi, ys[i], his[i], pHi[i]);
+      }
+      for (let h = 0; h < K; h++) {
+        lo = Math.min(lo, lastDists[h].quantile(0.025));
+        hi = Math.max(hi, lastDists[h].quantile(0.975));
+      }
+      const span = (hi - lo) || 1; lo -= 0.08 * span; hi += 0.08 * span;
+      if (yLoS === null) { yLoS = lo; yHiS = hi; }
+      yLoS += 0.15 * (lo - yLoS); yHiS += 0.15 * (hi - yHiS);
+      yLoS = Math.min(yLoS, lo); yHiS = Math.max(yHiS, hi);
+      lo = yLoS; hi = yHiS;
+      const x = xOf(W), yy = (v) => H - PAD + 10 - (H - 2 * PAD) * (v - lo) / (hi - lo);
+      ctx.strokeStyle = BASE; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(PAD, yy(lo)); ctx.lineTo(W - PAD, yy(lo)); ctx.stroke();
+
+      // sandwiched history band (filled blue)
+      ctx.fillStyle = BAND; ctx.beginPath();
+      ctx.moveTo(x(1), yy(his[0]));
+      for (let i = 1; i < n; i++) ctx.lineTo(x(i), yy(his[i - 1]));
+      for (let i = n - 1; i >= 1; i--) ctx.lineTo(x(i), yy(los[i - 1]));
+      ctx.closePath(); ctx.fill();
+
+      // Prophet fixed band (dashed grey outline, upper + lower)
+      ctx.strokeStyle = GREY; ctx.lineWidth = 1.3; ctx.setLineDash([5, 4]);
+      ctx.beginPath(); ctx.moveTo(x(1), yy(pHi[0]));
+      for (let i = 1; i < n; i++) ctx.lineTo(x(i), yy(pHi[i - 1])); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x(1), yy(pLo[0]));
+      for (let i = 1; i < n; i++) ctx.lineTo(x(i), yy(pLo[i - 1])); ctx.stroke();
+      ctx.setLineDash([]);
+
+      // shared mean
+      ctx.strokeStyle = ACCENT; ctx.lineWidth = 1.8; ctx.beginPath();
+      ctx.moveTo(x(1), yy(means[0]));
+      for (let i = 1; i < n; i++) ctx.lineTo(x(i), yy(means[i - 1]));
+      ctx.stroke();
+
+      // forward fans, anchored at last observation
+      const x0 = x(n - 1), y0 = yy(ys[n - 1]);
+      ctx.fillStyle = HOTBAND; ctx.beginPath(); ctx.moveTo(x0, y0);
+      for (let h = 0; h < K; h++) ctx.lineTo(x(n + h), yy(lastDists[h].quantile(0.975)));
+      for (let h = K - 1; h >= 0; h--) ctx.lineTo(x(n + h), yy(lastDists[h].quantile(0.025)));
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = HOT; ctx.lineWidth = 1.8; ctx.setLineDash([4, 3]);
+      ctx.beginPath(); ctx.moveTo(x0, y0);
+      for (let h = 0; h < K; h++) ctx.lineTo(x(n + h), yy(lastDists[h].mean));
+      ctx.stroke();
+      // Prophet fixed fan (constant width, dashed grey)
+      ctx.strokeStyle = GREY; ctx.lineWidth = 1.3; ctx.setLineDash([5, 4]);
+      ctx.beginPath(); ctx.moveTo(x0, yy(ys[n - 1] + Z * sigP));
+      for (let h = 0; h < K; h++) ctx.lineTo(x(n + h), yy(lastDists[h].mean + Z * sigP)); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x0, yy(ys[n - 1] - Z * sigP));
+      for (let h = 0; h < K; h++) ctx.lineTo(x(n + h), yy(lastDists[h].mean - Z * sigP)); ctx.stroke();
+      ctx.setLineDash([]);
+
+      // observations
+      ctx.fillStyle = INK;
+      for (let i = 0; i < n; i++) { ctx.beginPath(); ctx.arc(x(i), yy(ys[i]), 1.7, 0, 2 * Math.PI); ctx.fill(); }
+    }
+
+    function drawZ() {
+      const cv = document.getElementById("zpanel");
+      const [ctx, W, H] = fit(cv);
+      ctx.clearRect(0, 0, W, H);
+      const n = zs.length; if (n < 3) return;
+      const lo = -4.2, hi = 4.2;
+      const x = xOf(W), yy = (v) => H - 18 - (H - 34) * (v - lo) / (hi - lo);
+      ctx.fillStyle = BAND;
+      ctx.fillRect(PAD, yy(1.96), W - 2 * PAD, yy(-1.96) - yy(1.96));
+      ctx.strokeStyle = BASE; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(PAD, yy(0)); ctx.lineTo(W - PAD, yy(0)); ctx.stroke();
+      const xf0 = x(n - 1);
+      ctx.fillStyle = HOTBAND;
+      ctx.fillRect(xf0, yy(1.96), x(n - 1 + K) - xf0, yy(-1.96) - yy(1.96));
+      ctx.strokeStyle = HOT; ctx.lineWidth = 1.8; ctx.setLineDash([4, 3]);
+      ctx.beginPath(); ctx.moveTo(xf0, yy(0)); ctx.lineTo(x(n - 1 + K), yy(0)); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = MUTED; ctx.font = "11px sans-serif";
+      ctx.fillText("+1.96", W - PAD - 34, yy(1.96) - 4);
+      ctx.fillText("−1.96", W - PAD - 37, yy(-1.96) + 12);
+      ctx.fillStyle = INK;
+      for (let i = 0; i < n; i++) { ctx.beginPath(); ctx.arc(x(i), yy(Math.max(lo, Math.min(hi, zs[i]))), 1.7, 0, 2 * Math.PI); ctx.fill(); }
+    }
+
+    const toggle = (id, fn) => {
+      const b = document.getElementById(id);
+      b.onclick = () => { fn(); b.classList.toggle("on"); };
+    };
+    toggle("trend", () => { trendOn = !trendOn; });
+    toggle("season", () => { seasonOn = !seasonOn; });
+    document.getElementById("burst").onclick = () => { burstLeft = 45; };
+    document.getElementById("spike").onclick = () => { pendingSpike = true; };
+
+    for (let i = 0; i < 60; i++) step();
+    setInterval(() => { step(); drawY(); drawZ(); }, 90);
+    addEventListener("resize", () => { drawY(); drawZ(); });
+  </script>
+</body>
+</html>
