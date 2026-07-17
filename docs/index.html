@@ -131,6 +131,15 @@ pred.cdf(y_obs)        # PIT value; uniform under calibration
       detectors, tabled on
       <a href="https://skaters.microprediction.org/sandwich.html">the sandwich page</a>.</p>
 
+    <h2>Alternatives</h2>
+    <p>If Prophet itself is not a requirement:
+      <a href="https://pypi.org/project/pymc-forecast/">pymc-forecast</a>
+      (PyMC Labs) takes the same sandwich well &mdash; benchmarked the day
+      after its release, it finishes ahead of <code>laplace</code> on 65% of
+      the universe when sandwiched, +0.04 nats median
+      (<a href="https://skaters.microprediction.org/challengers/pymc-forecast.html">the bout</a>)
+      &mdash; and plain <code>laplace</code> needs no sandwich at all.</p>
+
     <p class="byline">v0 demonstrates interoperability: it maps future frames
       only, and horizons past <code>k</code> reuse the k-step transport, a
       disclosed approximation. Full API and caveats in the
