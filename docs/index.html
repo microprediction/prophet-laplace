@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>prophet-laplace</title>
-  <meta name="description" content="Prophet in a laplace sandwich: the same Prophet API, with calibrated predictive densities. Run Prophet in skaters' coordinates and map back exactly." />
+  <meta name="description" content="Prophet in a laplace sandwich: the same Prophet API, with calibrated predictive densities. Run Prophet in laplace's coordinates and map back exactly." />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="prophet-laplace" />
   <meta property="og:title" content="prophet-laplace" />
@@ -32,9 +32,7 @@
       <nav>
         <a href="/">Home</a>
         <a href="/demo.html">Demo</a>
-        <a href="https://skaters.microprediction.org/">skaters</a>
-        <a href="https://skaters.microprediction.org/sandwich.html">The sandwich</a>
-        <a href="https://repos.microprediction.org/">the stack</a>
+        <a href="/demo.html">Methodology</a>
         <a href="https://pypi.org/project/prophet-laplace/">PyPI</a>
         <a href="https://github.com/microprediction/prophet-laplace">GitHub</a>
       </nav>
@@ -58,8 +56,8 @@
       Prophet in a laplace sandwich: the same Prophet API, with calibrated
       predictive densities. <code>SandwichedProphet</code> fits
       <a href="https://github.com/facebook/prophet">Prophet</a> in the
-      z-coordinates of a <a href="https://skaters.microprediction.org/">skaters</a>
-      <code>laplace</code> forecaster and maps every forecast back through the
+      z-coordinates of a <code>laplace</code> forecaster and maps every
+      forecast back through the
       exact inverse. Prophet keeps its calendar decomposition, holidays, and
       extra regressors; the sandwich adds the volatility clock, repeated-value
       handling, and tails whose stated probabilities come true.
@@ -119,7 +117,7 @@ pred.cdf(y_obs)        # PIT value; uniform under calibration
     <h2>The measured gap</h2>
     <p>Measured on 921 non-price FRED series under a pre-registered protocol
       (statements filed before results, frozen universe, harness and results
-      committed in the skaters repository):</p>
+      committed in the <a href="https://github.com/microprediction/skaters">benchmark repository</a>):</p>
     <table>
       <thead><tr><th></th><th>median one-step LL vs laplace</th><th>family-weighted (120 families)</th></tr></thead>
       <tbody>
